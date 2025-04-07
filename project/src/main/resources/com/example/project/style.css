@@ -1,0 +1,9 @@
+.search-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+
+    -fx-margin-top: 10px;
+    -fx-font-size: 14px;
+}
