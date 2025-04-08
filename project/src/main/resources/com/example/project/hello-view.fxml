@@ -61,13 +61,14 @@
                </VBox.margin>
            </HBox>
 
-           <TableView prefHeight="200.0" prefWidth="200.0">
+           <TableView fx:id="movieList" prefHeight="200.0" prefWidth="200.0">
                <columns>
-                  <TableColumn prefWidth="75.0" text="Titre" />
-                  <TableColumn prefWidth="75.0" text="Format" />
-                  <TableColumn prefWidth="75.0" text="Annee" />
-                  <TableColumn prefWidth="75.0" text="Genre" />
-                  <TableColumn prefWidth="75.0" text="Vu" />
+                  <TableColumn fx:id="title" prefWidth="250.0" text="Titre" />
+                   <TableColumn fx:id="director" prefWidth="100.0" text="Realisateur" />
+                  <TableColumn fx:id="format" prefWidth="100.0" text="Format" />
+                  <TableColumn fx:id="annee" prefWidth="100.0" text="Annee" />
+                  <TableColumn fx:id="genre" prefWidth="100.0" text="Genre" />
+                   <TableColumn fx:id="ajout" prefWidth="100.0" text="Date d'ajout" />
                </columns>
             </TableView>
             <HBox prefHeight="100.0" prefWidth="200.0">
