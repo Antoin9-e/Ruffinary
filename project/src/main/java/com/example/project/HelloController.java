@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class HelloController {
@@ -53,6 +54,9 @@ public class HelloController {
     private RadioMenuItem LaDiMenuAdd;
     @FXML private ToggleGroup type;
 
+    @FXML
+    private TextField upcField ;
+
 
 
 
@@ -84,6 +88,8 @@ public class HelloController {
     private TableColumn<Entity, String> ajout;
     @FXML
     private Button submitAdd;
+    @FXML
+    private Button submitAdd2;
     @FXML
             private VBox barcodeAdd;
 
@@ -130,6 +136,12 @@ public class HelloController {
             realisateurField.clear();
             anneeField.clear();
             genreField.clear();
+        });
+
+        submitAdd2.setOnAction(event -> {
+            System.out.println("Button clicked");
+            addEntityByBarcode();
+            upcField.clear();
         });
 
 
@@ -190,8 +202,9 @@ public class HelloController {
                     String genre = resultSet.getString("genre");
                     String format = resultSet.getString("format_nom");
                     String date_ajout = resultSet.getString("date_ajout");
+                    String editor = resultSet.getString("editeur");
 
-                    movieData.add(new Entity(title, director, year, genre, format, date_ajout));
+                    movieData.add(new Entity(title, director, year, editor, genre, format, date_ajout));
                 }
 
                 // Afficher les données dans la TableView
@@ -256,6 +269,74 @@ public class HelloController {
 
 
     }
+
+    private void addEntityByBarcode(){
+        try{
+            String code = upcField.getText();
+
+            if (code.isEmpty()){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText("Code-barres vide");
+                alert.setContentText("Veuillez entrer un code-barres valide.");
+                alert.showAndWait();
+                return;
+            }
+            if (code.length() != 13){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText("Code-barres invalide");
+                alert.setContentText("Veuillez entrer un code-barres valide.");
+                alert.showAndWait();
+                return;
+            }
+            System.out.println("Code-barres: " + code);
+            Api a = new Api();
+            String json = a.movieSearch(code);
+
+
+            a.getFormat(json);
+            a.getDirector(json);
+            a.getAnnee(json);
+            a.getTitle(json);
+            a.getEditor(json);
+
+            Alert conf = new Alert(Alert.AlertType.CONFIRMATION);
+            conf.setTitle("Confirmation des informations recues");
+            conf.setHeaderText("Liste des informations recues");
+            conf.setContentText(
+                    "Titre:   " + a.getTitle(json) + "\n" +
+                            "Realisateur:   " + a.getDirector(json) + "\n" +
+                            "Annee:   " + a.getAnnee(json) + "\n" +
+                            "Format:   " + a.getFormat(json) + "\n" +
+                            "Editeur:   " + a.getEditor(json)
+            );
+
+            Optional<ButtonType> result = conf.showAndWait();
+            if (result.get() == ButtonType.OK){
+                Entity entity = new Entity(a.getTitle(json), a.getDirector(json), a.getAnnee(json), a.getEditor(json), "Unknow",a.getFormat(json), LocalDate.now().toString());
+
+                Bdd b = new Bdd();
+                b.addEntity(entity, code);
+                System.out.println("Entity added to database");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ajout reussi");
+                alert.show();
+                movieData.clear();
+                loadMovieData();
+                upcField.clear();
+            }
+            else {
+                System.out.println("Cancel clicked");
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 

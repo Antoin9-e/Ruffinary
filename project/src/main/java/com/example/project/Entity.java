@@ -1,15 +1,18 @@
 package com.example.project;
 
+import java.time.LocalDate;
+
 public class Entity {
 
     private String title;
     private String director;
     private int year;
+    private String editor;
     private String genre;
     private String format;
-    private String date_ajout;
+    private  String date_ajout ;
 
-    public Entity(String title, String director, int year, String genre, String format, String date_ajout) {
+    public Entity(String title, String director, int year, String editor, String genre, String format, String date_ajout) {
 
         this.title = title;
         this.director = director;
@@ -17,8 +20,28 @@ public class Entity {
         this.genre = genre;
         this.format = format;
         this.date_ajout = date_ajout;
+        this.editor = editor;
     }
 
+    public Entity(){
+        this.title = "Unknown";
+        this.director = "Unknown";
+        this.year = 0;
+        this.genre = "Unknown";
+        this.format = "Unknown";
+        this.date_ajout = LocalDate.now().toString();
+    }
+
+    public int getFormatId() {
+        return switch (format) {
+            case "DVD" -> 3;
+            case "Blu-ray", "BluRay", "BRD" -> 1;
+            case "VHS" -> 4;
+            case "Laser-Disc" -> 2;
+            default -> 0; // Unknown format
+
+        };
+    }
 
     public String getTitle() {
         return title;

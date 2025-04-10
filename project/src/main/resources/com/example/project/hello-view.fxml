@@ -62,7 +62,7 @@
                </VBox.margin>
            </HBox>
 
-           <TableView fx:id="movieList" prefHeight="200.0" prefWidth="517.0">
+           <TableView fx:id="movieList" minHeight="-Infinity" prefHeight="600.0" prefWidth="517.0">
                <columns>
                   <TableColumn fx:id="title" prefWidth="250.0" text="Titre" />
                    <TableColumn fx:id="director" prefWidth="100.0" text="Realisateur" />
@@ -188,14 +188,14 @@
                               <Insets left="20.0" />
                            </HBox.margin>
                         </Label>
-                        <TextField prefHeight="25.0" prefWidth="188.0">
+                        <TextField fx:id="upcField" prefHeight="25.0" prefWidth="188.0">
                            <HBox.margin>
                               <Insets right="20.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
                   </HBox>
-                  <Button fx:id="submitAdd" alignment="BOTTOM_RIGHT" mnemonicParsing="false" text="Valider">
+                  <Button fx:id="submitAdd2" alignment="BOTTOM_RIGHT" mnemonicParsing="false" text="Valider">
                      <VBox.margin>
                         <Insets left="190.0" top="10.0" />
                      </VBox.margin>
