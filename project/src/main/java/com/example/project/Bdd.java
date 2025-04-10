@@ -1,5 +1,7 @@
 package com.example.project;
 
+import javafx.scene.control.Alert;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -57,6 +59,11 @@ public class Bdd {
                     }
                 } catch (SQLException e) {
                     System.out.println("❌ Erreur d'exécution de la requête : " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur");
+                    alert.setHeaderText("Erreur d'ajout de l'entité");
+                    alert.setContentText("Une erreur s'est produite lors de l'ajout de l'entité : " + e.getMessage());
+                    alert.showAndWait();
                 }
             }
         } catch (Exception e) {

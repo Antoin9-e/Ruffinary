@@ -52,6 +52,10 @@ public class HelloController {
     private RadioMenuItem UmdMenuAdd;
     private RadioMenuItem BluRayMenuAdd;
     private RadioMenuItem LaDiMenuAdd;
+
+
+    @FXML
+    private TextField editeurTextField;
     @FXML private ToggleGroup type;
 
     @FXML
@@ -131,11 +135,12 @@ public class HelloController {
         submitAdd.setOnAction(event -> {;
             System.out.println("Button clicked");
             addEntity();
-            loadMovieData();
+
             titleField.clear();
             realisateurField.clear();
             anneeField.clear();
             genreField.clear();
+            editeurTextField.clear();
         });
 
         submitAdd2.setOnAction(event -> {
@@ -217,58 +222,25 @@ public class HelloController {
         }
     }
 
+    private  void addEntity() {
+        Bdd b = new Bdd();
+        RadioMenuItem selectedFormat = (RadioMenuItem) type.getSelectedToggle();
+        String format = selectedFormat.getText();
+        Entity en = new Entity(format);
+        System.out.println( "Format: " + format + " id: " + en.getFormatId());
 
-    private void addEntity(){
-        try (Connection connection = DriverManager.getConnection(url, username, password);) {
-
-            String titre = titleField.getText();
-            String realisateur = realisateurField.getText();
-            int annee = Integer.parseInt(anneeField.getText());
-            RadioMenuItem selectedFormat = (RadioMenuItem) type.getSelectedToggle();
-            String genre = genreField.getText();
-            String format = selectedFormat.getText();
-            System.out.println("Format: " + format);
-            int formatId;
-            // Convertir le format en entier
-            if (format.equals("Blu-Ray")) {
-                formatId = 1;
-            } else if (format.equals("Laser-Disc")) {
-                formatId = 2;
-            } else if (format.equals("DVD")) {
-                formatId = 3;
-            } else if (format.equals("UMD")) {
-                formatId = 4;
-            } else {
-                System.out.println("Format non valide");
-                return;
-            }
-
-
-            String query = "INSERT INTO entity (titre, realisateur, annee_sortie, genre,format_id) VALUES (?, ?, ?, ?,?)";
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.setString(1, titre);
-                    statement.setString(2, realisateur);
-                    statement.setInt(3, annee);
-                    statement.setString(4, genre);
-                    statement.setInt(5, formatId);
-
-                    // Exécuter la requête
-                    int rowsInserted = statement.executeUpdate();
-                    if (rowsInserted > 0) {
-                        System.out.println("A new entity was inserted successfully!");
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }catch (NumberFormatException e) {
-                System.out.println("Invalid input for year. Please enter a valid number.");
-            }
-
-
-
-
-
+        Entity entity = new Entity(titleField.getText(), realisateurField.getText(), Integer.parseInt(anneeField.getText()), editeurTextField.getText(), genreField.getText(), en.getFormat(), LocalDate.now().toString());
+        b.addEntity(entity, null);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Ajout reussi");
+        alert.show();
+        movieData.clear();
+        loadMovieData();
     }
+
+
+
+
 
     private void addEntityByBarcode(){
         try{
@@ -292,6 +264,14 @@ public class HelloController {
             }
             System.out.println("Code-barres: " + code);
             Api a = new Api();
+            if (a.movieSearch(code) == null){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText("Code-barres invalide");
+                alert.setContentText("L'Api ne connait pas le barcode.");
+                alert.showAndWait();
+                return;
+            }
             String json = a.movieSearch(code);
 
 

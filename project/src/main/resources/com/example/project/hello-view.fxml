@@ -154,6 +154,20 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Editeur: ">
+                           <HBox.margin>
+                              <Insets bottom="3.0" right="32.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="editeurTextField">
+                           <HBox.margin>
+                              <Insets bottom="3.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
                   <SplitMenuButton fx:id="formatField" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" popupSide="RIGHT" text="Format" textOverrun="CENTER_ELLIPSIS">
                      <items>
                         <RadioMenuItem fx:id="dvdMenuAdd" mnemonicParsing="false" text="DVD">
@@ -164,6 +178,7 @@
                         <RadioMenuItem fx:id="BluRayMenuAdd" mnemonicParsing="false" text="Blu-Ray" toggleGroup="$type" />
                         <RadioMenuItem fx:id="LaDiMenuAdd" mnemonicParsing="false" text="Laser-Disc" toggleGroup="$type" />
                         <RadioMenuItem fx:id="UmdMenuAdd" mnemonicParsing="false" text="UMD" toggleGroup="$type" />
+                        <RadioMenuItem mnemonicParsing="false" text="Blu-Ray 4k" toggleGroup="$type" />
                      </items>
                   </SplitMenuButton>
                   <Button fx:id="submitAdd" alignment="BOTTOM_RIGHT" mnemonicParsing="false" text="Valider">

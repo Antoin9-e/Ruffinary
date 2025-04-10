@@ -23,21 +23,23 @@ public class Entity {
         this.editor = editor;
     }
 
-    public Entity(){
+    public Entity(String format){
         this.title = "Unknown";
         this.director = "Unknown";
         this.year = 0;
         this.genre = "Unknown";
-        this.format = "Unknown";
+        this.format = format;
         this.date_ajout = LocalDate.now().toString();
     }
+
 
     public int getFormatId() {
         return switch (format) {
             case "DVD" -> 3;
-            case "Blu-ray", "BluRay", "BRD" -> 1;
-            case "VHS" -> 4;
+            case "Blu-Ray", "BluRay", "BRD" -> 1;
+            case "UMD" -> 4;
             case "Laser-Disc" -> 2;
+            case "BluRay 4K","Blu-Ray 4k" -> 5;
             default -> 0; // Unknown format
 
         };
