@@ -26,13 +26,23 @@ Toute utilisation non autorisée est interdite.
 - [x] Initialiser le dépôt Git
 - [x] Créer le fichier README
 - [x] Ajouter une licence
+- [X] creer le projet maven
+- [X] creer la base de donnees
+- [X] fct ajouter manuellement
+- [X] fct ajouter avec barcode
+- [] 
 
 ---
 
 ## 🔧 Tâches à faire
 
-- [ ] creer le projet maven
-- [ ] creer la base de donnees 
+
 - [ ] Faire la liste des fonctionnalites
+- [ ] Debuggage
+- [ ] Tri Base
+- [ ] Compteur Ditems
+- [ ] modifier
+- [ ] Api Laser Disc
+- [ ] a voir ...
 
 
