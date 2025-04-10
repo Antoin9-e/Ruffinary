@@ -67,4 +67,8 @@ public class Entity {
     public String getDateAjout() {
         return date_ajout;
     }
+
+    public String getEditor() {
+        return editor;
+    }
 }

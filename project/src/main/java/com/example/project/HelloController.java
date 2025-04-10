@@ -60,6 +60,9 @@ public class HelloController {
 
     @FXML
     private TextField upcField ;
+    @FXML
+    private Button deleteBtn;
+
 
 
 
@@ -91,6 +94,8 @@ public class HelloController {
     @FXML
     private TableColumn<Entity, String> ajout;
     @FXML
+    private TableColumn<Entity, String> editor;
+    @FXML
     private Button submitAdd;
     @FXML
     private Button submitAdd2;
@@ -117,6 +122,7 @@ public class HelloController {
         addCase.setManaged(false);
         addCase.setVisible(false);
 
+
         try {
             title.setCellValueFactory(celldata -> new SimpleStringProperty(celldata.getValue().getTitle()));
             annee.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getYear()).asObject());
@@ -124,6 +130,7 @@ public class HelloController {
             format.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFormat()));
             director.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDirector()));
             ajout.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDateAjout()));
+            editor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEditor()));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -148,6 +155,41 @@ public class HelloController {
             addEntityByBarcode();
             upcField.clear();
         });
+
+        // Ajouter un écouteur d'événements pour le bouton de suppression
+        movieList.setOnMouseClicked(event -> {
+            if (movieList.getSelectionModel().getSelectedItem() != null) {
+            deleteBtn.setDisable(false);
+            deleteBtn.setOnAction(evt -> {
+                    Entity selectedMovie = movieList.getSelectionModel().getSelectedItem();
+                    System.out.println("Selected movie: " + selectedMovie.getTitle());
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation de suppression");
+                    alert.setHeaderText("Êtes-vous sûr de vouloir supprimer ce film ?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        Bdd b = new Bdd();
+                        if (b.deleteEntity(selectedMovie)) {
+                            Alert a = new Alert(Alert.AlertType.INFORMATION);
+                            a.setTitle("Suppression reussi");
+                            a.setHeaderText("Le film a bien été supprimé");
+                            a.show();
+                            movieData.remove(selectedMovie);
+                        } else {
+                            Alert f = new Alert(Alert.AlertType.ERROR);
+                            f.setTitle("Erreur de suppression");
+                            f.setHeaderText("Le film n'a pas pu être supprimé");
+                            f.show();
+                        }
+                    }
+
+
+                 });
+             }else {
+                deleteBtn.setDisable(true);
+            }
+        });
+
 
 
         addBTN.setOnAction(event -> {
@@ -297,11 +339,12 @@ public class HelloController {
                 Entity entity = new Entity(a.getTitle(json), a.getDirector(json), a.getAnnee(json), a.getEditor(json), "Unknow",a.getFormat(json), LocalDate.now().toString());
 
                 Bdd b = new Bdd();
-                b.addEntity(entity, code);
-                System.out.println("Entity added to database");
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Ajout reussi");
-                alert.show();
+                if ( b.addEntity(entity, code)) {
+                    System.out.println("Entity added to database");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ajout reussi");
+                    alert.show();
+                }
                 movieData.clear();
                 loadMovieData();
                 upcField.clear();

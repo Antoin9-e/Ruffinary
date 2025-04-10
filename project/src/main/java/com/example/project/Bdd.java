@@ -36,20 +36,21 @@ public class Bdd {
         }
     }
 
-    public void addEntity(Entity entity, String code_barre) {
+    public boolean addEntity(Entity entity, String code_barre) {
         Connection connection = null;
         try {
             connection = connect();  // Connexion ouverte pour exécuter les requêtes
             if (connection != null) {
-                String sql = "INSERT INTO entity (titre, realisateur, annee_sortie, code_barre, genre, format_id, date_ajout) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO entity (titre, realisateur, editeur, annee_sortie, code_barre, genre, format_id, date_ajout) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setString(1, entity.getTitle());
                     preparedStatement.setString(2, entity.getDirector());
-                    preparedStatement.setInt(3, entity.getYear());
-                    preparedStatement.setString(4, code_barre);
-                    preparedStatement.setString(5, entity.getGenre());
-                    preparedStatement.setInt(6, entity.getFormatId());
-                    preparedStatement.setString(7, entity.getDateAjout());
+                    preparedStatement.setString(3, entity.getEditor());
+                    preparedStatement.setInt(4, entity.getYear());
+                    preparedStatement.setString(5, code_barre);
+                    preparedStatement.setString(6, entity.getGenre());
+                    preparedStatement.setInt(7, entity.getFormatId());
+                    preparedStatement.setString(8, entity.getDateAjout());
 
                     int rowsAffected = preparedStatement.executeUpdate();
                     if (rowsAffected > 0) {
@@ -64,6 +65,8 @@ public class Bdd {
                     alert.setHeaderText("Erreur d'ajout de l'entité");
                     alert.setContentText("Une erreur s'est produite lors de l'ajout de l'entité : " + e.getMessage());
                     alert.showAndWait();
+                    closeConnection(connection);
+                    return false;
                 }
             }
         } catch (Exception e) {
@@ -71,5 +74,43 @@ public class Bdd {
         } finally {
             closeConnection(connection);  // Connexion fermée à la fin de la méthode
         }
+        return true;
+    }
+
+    public boolean deleteEntity(Entity entity) {
+        Connection connection = null;
+        try {
+            connection = connect();
+            if (connection != null) {
+                String sql = "DELETE FROM entity WHERE titre = ? AND realisateur = ? AND annee_sortie = ? AND format_id = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, entity.getTitle());
+                    preparedStatement.setString(2, entity.getDirector());
+                    preparedStatement.setInt(3, entity.getYear());
+                    preparedStatement.setInt(4, entity.getFormatId());
+
+                    int rowsAffected = preparedStatement.executeUpdate();
+                    if (rowsAffected > 0) {
+                        System.out.println("✅ Entité supprimée avec succès !");
+                    } else {
+                        System.out.println("❌ Aucune entité supprimée.");
+                    }
+                } catch (SQLException e) {
+                    System.out.println("❌ Erreur d'exécution de la requête : " + e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur");
+                    alert.setHeaderText("Erreur de suppression de l'entité");
+                    alert.setContentText("Une erreur s'est produite lors de la suppression de l'entité : " + e.getMessage());
+                    alert.showAndWait();
+                    closeConnection(connection);
+                    return false;
+                }
+            }
+        }catch (Exception e) {
+            System.out.println("❌ Erreur de connexion ou autre : " + e.getMessage());
+        } finally {
+            closeConnection(connection);  // Connexion fermée à la fin de la méthode
+        }
+        return true;
     }
 }

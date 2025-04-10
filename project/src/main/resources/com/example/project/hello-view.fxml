@@ -62,7 +62,7 @@
                </VBox.margin>
            </HBox>
 
-           <TableView fx:id="movieList" minHeight="-Infinity" prefHeight="600.0" prefWidth="517.0">
+           <TableView fx:id="movieList" minHeight="-Infinity" prefHeight="458.0" prefWidth="340.0">
                <columns>
                   <TableColumn fx:id="title" prefWidth="250.0" text="Titre" />
                    <TableColumn fx:id="director" prefWidth="100.0" text="Realisateur" />
@@ -70,6 +70,7 @@
                   <TableColumn fx:id="annee" prefWidth="100.0" text="Annee" />
                   <TableColumn fx:id="genre" prefWidth="100.0" text="Genre" />
                    <TableColumn fx:id="ajout" prefWidth="100.0" text="Date d'ajout" />
+                  <TableColumn fx:id="editor" prefWidth="75.0" text="Editeur" />
                </columns>
             </TableView>
             <HBox prefHeight="100.0" prefWidth="200.0">
@@ -84,7 +85,7 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" text="Suprimer" />
+                  <Button fx:id="deleteBtn" disable="true" mnemonicParsing="false" text="Suprimer" />
                </children>
             </HBox>
          </children>
