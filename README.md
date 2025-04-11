@@ -1,5 +1,7 @@
 # Ruffinary
 
+![Logo](/logo.png)
+
 Ruffinary is a media library for my father-in-law who collects Blu-ray laser discs etc.
 
 ## Installation
