@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.jsoup.nodes.Document;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -22,7 +23,11 @@ public class HelloController {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
 
+    @FXML
+    private ChoiceBox<String> genreChoice;
 
+    @FXML
+    private ChoiceBox<String> filtreFormat;
 
 
     @FXML
@@ -101,6 +106,8 @@ public class HelloController {
     private Button submitAdd2;
     @FXML
             private VBox barcodeAdd;
+    @FXML
+            private CheckBox ldCheck;
 
 
 
@@ -117,6 +124,10 @@ public class HelloController {
 
     @FXML
     public void initialize() {
+        genreChoice.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
+        genreChoice.setValue("Action");
+        filtreFormat.getItems().addAll("DVD", "Blu-Ray", "UMD", "Laser-Disc", "Blu-Ray 4K", "HD-DVD", "Blu-Ray 3d","All");
+
         barcodeAdd.setManaged(false);
         barcodeAdd.setVisible(false);
         addCase.setManaged(false);
@@ -137,7 +148,7 @@ public class HelloController {
         }
         // Initialiser la TableView avec les colonnes
 
-        loadMovieData();
+        loadMovieData("");
 
         submitAdd.setOnAction(event -> {;
             System.out.println("Button clicked");
@@ -190,6 +201,18 @@ public class HelloController {
             }
         });
 
+        filtreFormat.setOnAction(event -> {
+            String selectedFormat = filtreFormat.getValue();
+            System.out.println("Selected format: " + selectedFormat);
+            String filter = "where format_nom = '" + selectedFormat + "'";
+            if (selectedFormat.equals("All")) {
+                filter = "";
+            }
+            movieList.getItems().clear();
+            loadMovieData(filter);
+
+        });
+
 
 
         addBTN.setOnAction(event -> {
@@ -224,21 +247,14 @@ public class HelloController {
         });
 
 
-        btnAffiche.setOnAction(event -> {
 
-            System.out.println("Button clicked");
-
-
-            boolean currentlyVisible = optionBar.isVisible();
-            optionBar.setVisible(!currentlyVisible);
-            optionBar.setManaged(!currentlyVisible);
-        });
     }
 
     // Méthode pour charger les données de la base de données
-    private void loadMovieData() {
+    private void loadMovieData(String filter) {
         try (Connection connection = DriverManager.getConnection(url, username, password);) {
-            String query = "SELECT * FROM entity join format using(format_id)";
+
+            String query = "SELECT * FROM entity join format using(format_id)"+filter;
             try (Statement statement = connection.createStatement()) {
                 ResultSet resultSet = statement.executeQuery(query);
 
@@ -265,19 +281,30 @@ public class HelloController {
     }
 
     private  void addEntity() {
-        Bdd b = new Bdd();
-        RadioMenuItem selectedFormat = (RadioMenuItem) type.getSelectedToggle();
-        String format = selectedFormat.getText();
-        Entity en = new Entity(format);
-        System.out.println( "Format: " + format + " id: " + en.getFormatId());
+        try {
+            Bdd b = new Bdd();
+            RadioMenuItem selectedFormat = (RadioMenuItem) type.getSelectedToggle();
+            String format = selectedFormat.getText();
+            Entity en = new Entity(format);
+            System.out.println( "Format: " + format + " id: " + en.getFormatId());
 
-        Entity entity = new Entity(titleField.getText(), realisateurField.getText(), Integer.parseInt(anneeField.getText()), editeurTextField.getText(), genreField.getText(), en.getFormat(), LocalDate.now().toString());
-        b.addEntity(entity, null);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Ajout reussi");
-        alert.show();
-        movieData.clear();
-        loadMovieData();
+            Entity entity = new Entity(titleField.getText(), realisateurField.getText(), Integer.parseInt(anneeField.getText()), editeurTextField.getText(), genreChoice.getValue(), en.getFormat(), LocalDate.now().toString());
+            b.addEntity(entity, null);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Ajout reussi");
+            alert.show();
+            movieData.clear();
+            loadMovieData("");
+            filtreFormat.setValue("All");
+
+        }catch (NullPointerException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Erreur de format");
+            alert.setContentText("Veuillez choisir un format valide.");
+            alert.showAndWait();
+        }
+
     }
 
 
@@ -306,52 +333,106 @@ public class HelloController {
             }
             System.out.println("Code-barres: " + code);
             Api a = new Api();
-            if (a.movieSearch(code) == null){
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur");
-                alert.setHeaderText("Code-barres invalide");
-                alert.setContentText("L'Api ne connait pas le barcode.");
-                alert.showAndWait();
-                return;
-            }
-            String json = a.movieSearch(code);
 
 
-            a.getFormat(json);
-            a.getDirector(json);
-            a.getAnnee(json);
-            a.getTitle(json);
-            a.getEditor(json);
-
-            Alert conf = new Alert(Alert.AlertType.CONFIRMATION);
-            conf.setTitle("Confirmation des informations recues");
-            conf.setHeaderText("Liste des informations recues");
-            conf.setContentText(
-                    "Titre:   " + a.getTitle(json) + "\n" +
-                            "Realisateur:   " + a.getDirector(json) + "\n" +
-                            "Annee:   " + a.getAnnee(json) + "\n" +
-                            "Format:   " + a.getFormat(json) + "\n" +
-                            "Editeur:   " + a.getEditor(json)
-            );
-
-            Optional<ButtonType> result = conf.showAndWait();
-            if (result.get() == ButtonType.OK){
-                Entity entity = new Entity(a.getTitle(json), a.getDirector(json), a.getAnnee(json), a.getEditor(json), "Unknow",a.getFormat(json), LocalDate.now().toString());
-
-                Bdd b = new Bdd();
-                if ( b.addEntity(entity, code)) {
-                    System.out.println("Entity added to database");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Ajout reussi");
-                    alert.show();
+            if(ldCheck.isSelected()){
+                if ( a.searchLaserDisc(code) == null){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur");
+                    alert.setHeaderText("Code-barres invalide");
+                    alert.setContentText("L'Api ne connait pas le barcode.");
+                    alert.showAndWait();
+                    return;
                 }
-                movieData.clear();
-                loadMovieData();
-                upcField.clear();
+
+                Document doc = a.searchLaserDisc(code);
+                a.getLaserDiscCode(doc);
+                a.getLaserDiscTitle(doc);
+                a.getLaserDiscCountry(doc);
+                a.getLaserDiscPrice(doc);
+                a.getLaserDiscPublisher(doc);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Informations sur le LaserDisc");
+                alert.setHeaderText("Informations sur le LaserDisc");
+                alert.setContentText(
+                        "Titre:   " + a.getLaserDiscTitle(doc) + "\n" +
+
+                                "Annee:   " + a.getLaserDiscReleased(doc) + "\n" +
+                                "Code:   " + a.getLaserDiscCode(doc) + "\n" +
+                                "Editeur:   " + a.getLaserDiscPublisher(doc) + "\n" +
+                                "Prix:   " + a.getLaserDiscPrice(doc) + "\n" +
+                                "Code-barres:   " + code
+                );
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    Entity entity = new Ld(a.getLaserDiscTitle(doc), "Unknown", Integer.parseInt(a.getLaserDiscReleased(doc)), a.getLaserDiscPublisher(doc), "Unknow", "Laser-Disc", LocalDate.now().toString(), a.getLaserDiscCountry(doc), a.getLaserDiscPrice(doc), a.getLaserDiscCode(doc));
+                    Bdd b = new Bdd();
+                    if ( b.addEntity(entity, code)) {
+                        System.out.println("Entity added to database");
+                        Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+                        alert2.setTitle("Ajout reussi");
+                        alert2.show();
+                    }
+                    movieData.clear();
+                    loadMovieData("");
+                    upcField.clear();
+                }
+                else {
+                    System.out.println("Cancel clicked");
+                }
+
+            }else {
+                if (a.movieSearch(code) == null){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur");
+                    alert.setHeaderText("Code-barres invalide");
+                    alert.setContentText("L'Api ne connait pas le barcode.");
+                    alert.showAndWait();
+                    return;
+                }
+                String json = a.movieSearch(code);
+
+
+                a.getFormat(json);
+                a.getDirector(json);
+                a.getAnnee(json);
+                a.getTitle(json);
+                a.getEditor(json);
+
+                Alert conf = new Alert(Alert.AlertType.CONFIRMATION);
+                conf.setTitle("Confirmation des informations recues");
+                conf.setHeaderText("Liste des informations recues");
+                conf.setContentText(
+                        "Titre:   " + a.getTitle(json) + "\n" +
+                                "Realisateur:   " + a.getDirector(json) + "\n" +
+                                "Annee:   " + a.getAnnee(json) + "\n" +
+                                "Format:   " + a.getFormat(json) + "\n" +
+                                "Editeur:   " + a.getEditor(json)
+                );
+
+                Optional<ButtonType> result = conf.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    Entity entity = new Entity(a.getTitle(json), a.getDirector(json), a.getAnnee(json), a.getEditor(json), "Unknow",a.getFormat(json), LocalDate.now().toString());
+
+                    Bdd b = new Bdd();
+                    if ( b.addEntity(entity, code)) {
+                        System.out.println("Entity added to database");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Ajout reussi");
+                        alert.show();
+                    }
+                    movieData.clear();
+                    loadMovieData("");
+                    upcField.clear();
+
+                }
+                else {
+                    System.out.println("Cancel clicked");
+                }
             }
-            else {
-                System.out.println("Cancel clicked");
-            }
+
+
+
 
 
         }catch (Exception e){

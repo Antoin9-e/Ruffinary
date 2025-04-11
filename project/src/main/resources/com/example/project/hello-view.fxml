@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -16,9 +18,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.HelloController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1265.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.HelloController">
    <top>
-      <MenuBar BorderPane.alignment="CENTER">
+      <MenuBar prefHeight="0.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -56,7 +58,7 @@
            <HBox alignment="CENTER" spacing="5">
              <Label style="-fx-font-size: 16px;" text="🔍" />
              <TextField fx:id="champRecherche" promptText="Rechercher..." styleClass="search-bar" />
-               <Button fx:id="btnAffiche" mnemonicParsing="false" text="Button" />
+               <ChoiceBox fx:id="filtreFormat" prefHeight="25.0" prefWidth="42.0" />
                <VBox.margin>
                   <Insets bottom="5.0" top="5.0" />
                </VBox.margin>
@@ -92,7 +94,7 @@
       </VBox>
    </center>
    <right>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <children>
             <VBox fx:id="addCase" minWidth="-Infinity" prefHeight="100.0" prefWidth="250.0">
                <children>
@@ -145,11 +147,7 @@
                               <Insets bottom="3.0" right="41.0" />
                            </HBox.margin>
                         </Label>
-                        <TextField fx:id="genreField">
-                           <HBox.margin>
-                              <Insets bottom="3.0" />
-                           </HBox.margin>
-                        </TextField>
+                        <ChoiceBox fx:id="genreChoice" prefWidth="150.0" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="5.0" />
@@ -211,11 +209,16 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <Button fx:id="submitAdd2" alignment="BOTTOM_RIGHT" mnemonicParsing="false" text="Valider">
-                     <VBox.margin>
-                        <Insets left="190.0" top="10.0" />
-                     </VBox.margin>
-                  </Button>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <CheckBox fx:id="ldCheck" mnemonicParsing="false" text="Laser-Disc">
+                           <HBox.margin>
+                              <Insets left="90.0" right="23.0" top="3.0" />
+                           </HBox.margin>
+                        </CheckBox>
+                        <Button fx:id="submitAdd2" alignment="BOTTOM_RIGHT" mnemonicParsing="false" text="Valider" />
+                     </children>
+                  </HBox>
                </children>
                <VBox.margin>
                   <Insets right="10.0" top="10.0" />

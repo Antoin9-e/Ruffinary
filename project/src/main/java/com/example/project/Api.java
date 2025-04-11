@@ -3,9 +3,14 @@ package com.example.project;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -14,59 +19,94 @@ import java.nio.charset.StandardCharsets;
 
 public class Api {
 
-    private static final String API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjOTkxM2ExMjBhNGU0MWY4ODFhODIzZmNlYTMyZWMxYyIsIm5iZiI6MTc0NDE5NTQ1NC42Miwic3ViIjoiNjdmNjRmN2UxYmM2Mzk1NjZhZDkxMmI3Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.XAvVi3zyPhd0avbBJ__gGc5l6CHo9AiqK5aaXKAlyDg";
 
-    public static String infoBarCode(String code) {
-        OkHttpClient client = new OkHttpClient();
+    public Document searchLaserDisc(String search) throws IOException {
+        try {
+            // URL de la page de redirection
+            String url = "https://www.lddb.com/search.php?search=" + search;
+            Document doc = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0")
+                    .timeout(10_000)
+                    .followRedirects(true) // Permet de suivre les redirections
+                    .get();
 
+            // Afficher tout le contenu HTML de la page redirigée
+            String pageHtml = doc.html();  // Récupère tout le HTML de la page après redirection
 
-        String url = "https://api.upcitemdb.com/prod/trial/lookup?upc=" + code;
+            Elements tables = doc.select("tr.contents_0");
 
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("accept", "application/json")
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful()) {
-                String body = response.body().string();
-
-                System.out.println("Réponse UPCitemdb :\n" + body);
-                return body;
-            } else {
-                System.out.println("Erreur : " + response.code());
-                return null;
+            String newUrl = "";
+            for (Element table : tables) {
+                newUrl = table.select("td a").attr("href");
             }
-        } catch (Exception e) {
+
+            // Afficher le contenu de la page redirigée
+            Document newDoc = Jsoup.connect(newUrl)
+                    .userAgent("Mozilla/5.0")
+                    .timeout(10_000)
+                    .get();
+            // Récupérer une table et extraire des données spécifiques (ex : format vidéo)
+           return newDoc;
+        }catch (Exception e){
             e.printStackTrace();
+
         }
 
         return null;
+    }
 
+    public String getLaserDiscTitle(Document doc) throws IOException {
+        // Récupérer le titre du LaserDisc
+        String title = doc.select("h2.lddb").text();
+        System.out.println("Titre : " + title);
+        int startIndex = title.indexOf("(");
+        title = title.substring(0, startIndex).trim();
+        return title;
+    }
+
+    public String getLaserDiscCountry(Document doc) throws IOException {
+        // Extraire le pays
+        String country = doc.select("td.field:contains(Country) + td.data").text();
+        System.out.println("Pays : " + country);
+        return country;
+    }
+
+    public String getLaserDiscPrice(Document doc) throws IOException {
+        // Extraire le prix
+        String price = doc.select("td.field:contains(Price) + td.data").text();
+        System.out.println("Prix : " + price);
+        return price;
+    }
+
+    public String getLaserDiscCode(Document doc) throws IOException {
+        // Extraire le code-barres UPC
+        String code = doc.select("h2.lddb").text();
+        int startIndex = code.indexOf("[");
+        int endIndex = code.indexOf("]");
+        code = code.substring(startIndex+1, endIndex);
+        System.out.println("UPC : " + code);
+        return code;
+    }
+
+    public String getLaserDiscPublisher(Document doc) throws IOException {
+        // Extraire l'éditeur
+        String publisher = doc.select("td.field:contains(Publisher) + td.data a").text();
+        System.out.println("Éditeur : " + publisher);
+        return publisher;
+    }
+
+    public String getLaserDiscReleased(Document doc) throws IOException {
+        // Extraire la date de sortie
+        String title = doc.select("h2.lddb").text();
+        int startIndex = title.indexOf("(");
+        int endIndex = title.indexOf(")");
+        String released = title.substring(startIndex + 1, endIndex);
+        System.out.println("Date de sortie : " + released);
+        return released;
     }
 
 
 
-    public boolean Valide(String json){
-        if (json == null || json.isEmpty()) {
-            System.out.println("La réponse est vide ou nulle.");
-            return false;
-        }
-        String total = "";
-        String [] parts = json.split("\"total\":");
-
-        total = parts[1].split(",")[0].replace("\"", "").trim();
-        System.out.println("Total part: " + total);
-        if (total.equals("0")){
-            System.out.println("Le code-barres n'est pas valide");
-            return false;
-        }
-        else {
-            System.out.println("Le code-barres est valide");
-            return true;
-        }
-    }
 
     public String movieSearch(String search) {
         OkHttpClient client = new OkHttpClient();
@@ -153,6 +193,9 @@ public class Api {
                 String [] parts = json.split("<titres> <fr>");
 
                 title = parts[1].split("</fr>")[0];
+                if (title.contains("&#039;")){
+                    title = title.replace("&#039;", "'");
+                }
             }else{
                 title = "Unknown";
             }

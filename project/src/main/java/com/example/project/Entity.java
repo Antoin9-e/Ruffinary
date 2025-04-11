@@ -39,7 +39,9 @@ public class Entity {
             case "Blu-Ray", "BluRay", "BRD" -> 1;
             case "UMD" -> 4;
             case "Laser-Disc" -> 2;
-            case "BluRay 4K","Blu-Ray 4k" -> 5;
+            case "BluRay 4K","Blu-Ray 4k","UHD" -> 5;
+            case "HD-DVD" -> 6;
+            case "BRD-3D" -> 7;
             default -> 0; // Unknown format
 
         };
