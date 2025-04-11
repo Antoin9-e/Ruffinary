@@ -7,3 +7,16 @@
     -fx-margin-top: 10px;
     -fx-font-size: 14px;
 }
+
+
+
+.table-view .column-header .label {
+    -fx-text-fill: black;
+    -fx-font-size: 13 px;
+    -fx-padding: 8 4 8 4;
+}
+
+.button:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+}

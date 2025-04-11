@@ -5,11 +5,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jsoup.nodes.Document;
 
+import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -19,9 +22,14 @@ public class HelloController {
     private Label welcomeText;
 
     @FXML
+    private BorderPane conteneur;
+
+    @FXML
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
+    @FXML
+    private Label cpt;
 
     @FXML
     private ChoiceBox<String> genreChoice;
@@ -68,6 +76,11 @@ public class HelloController {
     @FXML
     private Button deleteBtn;
 
+    @FXML
+    private RadioMenuItem light;
+
+    @FXML
+    private RadioMenuItem dark;
 
 
 
@@ -124,6 +137,9 @@ public class HelloController {
 
     @FXML
     public void initialize() {
+
+
+
         genreChoice.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
         genreChoice.setValue("Action");
         filtreFormat.getItems().addAll("DVD", "Blu-Ray", "UMD", "Laser-Disc", "Blu-Ray 4K", "HD-DVD", "Blu-Ray 3d","All");
@@ -149,6 +165,22 @@ public class HelloController {
         // Initialiser la TableView avec les colonnes
 
         loadMovieData("");
+
+
+        light.setSelected(true);
+        light.setOnAction(event -> {
+            System.out.println("Light mode selected");
+            Theme a = new Theme();
+            Scene scene = conteneur.getScene();
+            a.setLightMode(scene);
+        });
+
+        dark.setOnAction(event -> {
+            System.out.println("Dark mode selected");
+            Theme a = new Theme();
+            Scene scene = conteneur.getScene();
+            a.setDarkMode(scene);
+        });
 
         submitAdd.setOnAction(event -> {;
             System.out.println("Button clicked");
@@ -258,6 +290,8 @@ public class HelloController {
             try (Statement statement = connection.createStatement()) {
                 ResultSet resultSet = statement.executeQuery(query);
 
+                int cpt = 0;
+
                 while (resultSet.next()) {
                     String title = resultSet.getString("titre");
                     String director = resultSet.getString("realisateur");
@@ -268,7 +302,9 @@ public class HelloController {
                     String editor = resultSet.getString("editeur");
 
                     movieData.add(new Entity(title, director, year, editor, genre, format, date_ajout));
+                    cpt++;
                 }
+                this.cpt.setText(String.valueOf(cpt));
 
                 // Afficher les données dans la TableView
                 movieList.setItems(movieData);

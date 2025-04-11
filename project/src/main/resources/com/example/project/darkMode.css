@@ -1,0 +1,116 @@
+.root {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+}
+
+.label {
+    -fx-text-fill: #ffffff;
+}
+
+.button {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+
+.text-field {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #aaaaaa;
+}
+
+.table-view {
+    -fx-background-color: #2b2b2b;
+    -fx-table-cell-border-color: #3c3f41;
+    -fx-control-inner-background: #2b2b2b;
+    -fx-text-background-color: white;
+    -fx-selection-bar: #555555;
+    -fx-selection-bar-text: white;
+}
+
+.table-view .table-column-header{
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+
+.menu-item {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}menu-item:focused {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.menu-item:hover {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.table-column-header {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+
+.menu-bar{
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+
+
+
+.choice-box{
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+
+.choice-box .menu-item{
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #ffffff;
+}
+.choice-box .menu-item:focused {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.table-view .column-header,
+.table-view .column-header-background {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #444;
+}
+
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 8 4 8 4;
+}
+.table-view .filler {
+    -fx-background-color: #2b2b2b;
+}
+
+
+
+.hbox .label{
+    -fx-text-fill: black;
+}
+.check-box{
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.scroll-bar{
+    -fx-background-color: #3c3f41;
+}
+
+.search-bar {
+    -fx-background-color: #555555;
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+
+    -fx-margin-top: 10px;
+    -fx-font-size: 14px;
+}
