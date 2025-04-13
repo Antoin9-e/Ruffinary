@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jsoup.nodes.Document;
@@ -28,6 +29,7 @@ public class HelloController {
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
+
     @FXML
     private Label cpt;
 
@@ -69,10 +71,11 @@ public class HelloController {
 
     @FXML
     private TextField editeurTextField;
-    @FXML private ToggleGroup type;
+    @FXML
+    private ToggleGroup type;
 
     @FXML
-    private TextField upcField ;
+    private TextField upcField;
     @FXML
     private Button deleteBtn;
 
@@ -83,15 +86,8 @@ public class HelloController {
     private RadioMenuItem dark;
 
 
-
-
-
-
     @FXML
     private HBox optionBar;
-
-
-
 
 
     //table des données
@@ -118,11 +114,9 @@ public class HelloController {
     @FXML
     private Button submitAdd2;
     @FXML
-            private VBox barcodeAdd;
+    private VBox barcodeAdd;
     @FXML
-            private CheckBox ldCheck;
-
-
+    private CheckBox ldCheck;
 
 
     // Créer la connexion
@@ -131,19 +125,14 @@ public class HelloController {
     String password = "J9ueve-14540"; // Remplace par ton mot de passe
 
 
-
-
-
-
     @FXML
     public void initialize() {
 
 
-
         genreChoice.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
         genreChoice.setValue("Action");
-        filtreFormat.getItems().addAll("DVD", "Blu-Ray", "UMD", "Laser-Disc", "Blu-Ray 4K", "HD-DVD", "Blu-Ray 3d","All");
-
+        filtreFormat.getItems().addAll("DVD", "Blu-Ray", "UMD", "Laserdisc", "Blu-Ray 4K", "HD-DVD", "Blu-Ray 3d", "All");
+        filtreFormat.setValue("All");
         barcodeAdd.setManaged(false);
         barcodeAdd.setVisible(false);
         addCase.setManaged(false);
@@ -158,13 +147,17 @@ public class HelloController {
             director.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDirector()));
             ajout.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDateAjout()));
             editor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEditor()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         // Initialiser la TableView avec les colonnes
 
         loadMovieData("");
+
+        // Ajouter un écouteur d'événements pour le champ de recherche
+        champRecherche.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchBar();
+        });
 
 
         light.setSelected(true);
@@ -182,7 +175,8 @@ public class HelloController {
             a.setDarkMode(scene);
         });
 
-        submitAdd.setOnAction(event -> {;
+        submitAdd.setOnAction(event -> {
+            ;
             System.out.println("Button clicked");
             addEntity();
 
@@ -202,8 +196,8 @@ public class HelloController {
         // Ajouter un écouteur d'événements pour le bouton de suppression
         movieList.setOnMouseClicked(event -> {
             if (movieList.getSelectionModel().getSelectedItem() != null) {
-            deleteBtn.setDisable(false);
-            deleteBtn.setOnAction(evt -> {
+                deleteBtn.setDisable(false);
+                deleteBtn.setOnAction(evt -> {
                     Entity selectedMovie = movieList.getSelectionModel().getSelectedItem();
                     System.out.println("Selected movie: " + selectedMovie.getTitle());
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -227,8 +221,8 @@ public class HelloController {
                     }
 
 
-                 });
-             }else {
+                });
+            } else {
                 deleteBtn.setDisable(true);
             }
         });
@@ -244,7 +238,6 @@ public class HelloController {
             loadMovieData(filter);
 
         });
-
 
 
         addBTN.setOnAction(event -> {
@@ -274,10 +267,7 @@ public class HelloController {
             }
 
 
-
-
         });
-
 
 
     }
@@ -286,7 +276,7 @@ public class HelloController {
     private void loadMovieData(String filter) {
         try (Connection connection = DriverManager.getConnection(url, username, password);) {
 
-            String query = "SELECT * FROM entity join format using(format_id)"+filter;
+            String query = "SELECT * FROM entity join format using(format_id)" + filter;
             try (Statement statement = connection.createStatement()) {
                 ResultSet resultSet = statement.executeQuery(query);
 
@@ -316,13 +306,13 @@ public class HelloController {
         }
     }
 
-    private  void addEntity() {
+    private void addEntity() {
         try {
             Bdd b = new Bdd();
             RadioMenuItem selectedFormat = (RadioMenuItem) type.getSelectedToggle();
             String format = selectedFormat.getText();
             Entity en = new Entity(format);
-            System.out.println( "Format: " + format + " id: " + en.getFormatId());
+            System.out.println("Format: " + format + " id: " + en.getFormatId());
 
             Entity entity = new Entity(titleField.getText(), realisateurField.getText(), Integer.parseInt(anneeField.getText()), editeurTextField.getText(), genreChoice.getValue(), en.getFormat(), LocalDate.now().toString());
             b.addEntity(entity, null);
@@ -333,7 +323,7 @@ public class HelloController {
             loadMovieData("");
             filtreFormat.setValue("All");
 
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erreur");
             alert.setHeaderText("Erreur de format");
@@ -344,14 +334,11 @@ public class HelloController {
     }
 
 
-
-
-
-    private void addEntityByBarcode(){
-        try{
+    private void addEntityByBarcode() {
+        try {
             String code = upcField.getText();
 
-            if (code.isEmpty()){
+            if (code.isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erreur");
                 alert.setHeaderText("Code-barres vide");
@@ -359,7 +346,7 @@ public class HelloController {
                 alert.showAndWait();
                 return;
             }
-            if (code.length() != 13){
+            if (code.length() != 13) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Erreur");
                 alert.setHeaderText("Code-barres invalide");
@@ -371,8 +358,8 @@ public class HelloController {
             Api a = new Api();
 
 
-            if(ldCheck.isSelected()){
-                if ( a.searchLaserDisc(code) == null){
+            if (ldCheck.isSelected()) {
+                if (a.searchLaserDisc(code) == null) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Erreur");
                     alert.setHeaderText("Code-barres invalide");
@@ -382,43 +369,72 @@ public class HelloController {
                 }
 
                 Document doc = a.searchLaserDisc(code);
-                a.getLaserDiscCode(doc);
-                a.getLaserDiscTitle(doc);
-                a.getLaserDiscCountry(doc);
-                a.getLaserDiscPrice(doc);
-                a.getLaserDiscPublisher(doc);
+                String codeLd = a.getLaserDiscCode(doc);
+                String titre = a.getLaserDiscTitle(doc);
+                String Pays = a.getLaserDiscCountry(doc);
+                String prix = a.getLaserDiscPrice(doc);
+                String editeur = a.getLaserDiscPublisher(doc);
+                String anneesr = a.getLaserDiscReleased(doc);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Informations sur le LaserDisc");
                 alert.setHeaderText("Informations sur le LaserDisc");
-                alert.setContentText(
-                        "Titre:   " + a.getLaserDiscTitle(doc) + "\n" +
 
-                                "Annee:   " + a.getLaserDiscReleased(doc) + "\n" +
-                                "Code:   " + a.getLaserDiscCode(doc) + "\n" +
-                                "Editeur:   " + a.getLaserDiscPublisher(doc) + "\n" +
-                                "Prix:   " + a.getLaserDiscPrice(doc) + "\n" +
-                                "Code-barres:   " + code
-                );
+                TextField real = new TextField();
+                TextField nom = new TextField();
+                TextField annees = new TextField();
+                TextField editeurs = new TextField();
+                TextField format = new TextField();
+                ChoiceBox<String> genre = new ChoiceBox<>();
+                genre.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
+                genre.setValue("Unknow");
+                nom.setText(titre);
+                real.setText("Unknown");
+                annees.setText(anneesr);
+                editeurs.setText(editeur);
+                format.setText("Laserdisc");
+
+
+                GridPane grid = new GridPane();
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.add(new Label("Titre:"), 0, 0);
+                grid.add(nom, 1, 0);
+                grid.add(new Label("Realisateur:"), 0, 1);
+                grid.add(real, 1, 1);
+                grid.add(new Label("Annee:"), 0, 2);
+                grid.add(annees, 1, 2);
+                grid.add(new Label("Editeur:"), 0, 3);
+                grid.add(editeurs, 1, 3);
+                grid.add(new Label("Format:"), 0, 4);
+                grid.add(format, 1, 4);
+                grid.add(new Label("Genre:"), 0, 5);
+                grid.add(genre, 1, 5);
+
+
+                alert.getDialogPane().setContent(grid);
+
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK){
-                    Entity entity = new Ld(a.getLaserDiscTitle(doc), "Unknown", Integer.parseInt(a.getLaserDiscReleased(doc)), a.getLaserDiscPublisher(doc), "Unknow", "Laser-Disc", LocalDate.now().toString(), a.getLaserDiscCountry(doc), a.getLaserDiscPrice(doc), a.getLaserDiscCode(doc));
+                if (result.get() == ButtonType.OK) {
+                    Entity entity = new Ld(nom.getText(), real.getText(), Integer.parseInt(annees.getText()), editeurs.getText(), genre.getValue(), format.getText(), LocalDate.now().toString(), a.getLaserDiscCountry(doc), a.getLaserDiscPrice(doc), a.getLaserDiscCode(doc));
                     Bdd b = new Bdd();
-                    if ( b.addEntity(entity, code)) {
+                    if (b.addEntity(entity, code)) {
                         System.out.println("Entity added to database");
                         Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                         alert2.setTitle("Ajout reussi");
+                        alert2.setHeaderText("Le LaserDisc a bien été ajouté");
                         alert2.show();
                     }
                     movieData.clear();
                     loadMovieData("");
                     upcField.clear();
-                }
-                else {
+                    filtreFormat.setValue("All");
+
+                } else {
                     System.out.println("Cancel clicked");
                 }
 
-            }else {
-                if (a.movieSearch(code) == null){
+            } else {
+                if (a.movieSearch(code) == null) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Erreur");
                     alert.setHeaderText("Code-barres invalide");
@@ -438,42 +454,83 @@ public class HelloController {
                 Alert conf = new Alert(Alert.AlertType.CONFIRMATION);
                 conf.setTitle("Confirmation des informations recues");
                 conf.setHeaderText("Liste des informations recues");
-                conf.setContentText(
-                        "Titre:   " + a.getTitle(json) + "\n" +
-                                "Realisateur:   " + a.getDirector(json) + "\n" +
-                                "Annee:   " + a.getAnnee(json) + "\n" +
-                                "Format:   " + a.getFormat(json) + "\n" +
-                                "Editeur:   " + a.getEditor(json)
-                );
+                TextField real = new TextField();
+                TextField nom = new TextField();
+                TextField annee = new TextField();
+                TextField editeur = new TextField();
+                TextField format = new TextField();
+                ChoiceBox<String> genre = new ChoiceBox<>();
+                genre.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
+                genre.setValue("Unknow");
+                nom.setText(a.getTitle(json));
+                real.setText(a.getDirector(json));
+                annee.setText(String.valueOf(a.getAnnee(json)));
+                editeur.setText(a.getEditor(json));
+                format.setText(a.getFormat(json));
+
+
+                GridPane grid = new GridPane();
+                grid.setHgap(10);
+                grid.setVgap(10);
+                grid.add(new Label("Titre:"), 0, 0);
+                grid.add(nom, 1, 0);
+                grid.add(new Label("Realisateur:"), 0, 1);
+                grid.add(real, 1, 1);
+                grid.add(new Label("Annee:"), 0, 2);
+                grid.add(annee, 1, 2);
+                grid.add(new Label("Editeur:"), 0, 3);
+                grid.add(editeur, 1, 3);
+                grid.add(new Label("Format:"), 0, 4);
+                grid.add(format, 1, 4);
+                grid.add(new Label("Genre:"), 0, 5);
+                grid.add(genre, 1, 5);
+
+
+                conf.getDialogPane().setContent(grid);
 
                 Optional<ButtonType> result = conf.showAndWait();
-                if (result.get() == ButtonType.OK){
-                    Entity entity = new Entity(a.getTitle(json), a.getDirector(json), a.getAnnee(json), a.getEditor(json), "Unknow",a.getFormat(json), LocalDate.now().toString());
+                if (result.get() == ButtonType.OK) {
+                    Entity entity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annee.getText()), editeur.getText(), genre.getValue(), format.getText(), LocalDate.now().toString());
 
                     Bdd b = new Bdd();
-                    if ( b.addEntity(entity, code)) {
+                    if (b.addEntity(entity, code)) {
                         System.out.println("Entity added to database");
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Ajout reussi");
+                        alert.setHeaderText("Le film a bien été ajouté");
                         alert.show();
                     }
                     movieData.clear();
                     loadMovieData("");
                     upcField.clear();
+                    filtreFormat.setValue("All");
 
-                }
-                else {
+                } else {
                     System.out.println("Cancel clicked");
                 }
             }
 
 
-
-
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void searchBar() {
+        String query = champRecherche.getText();
+        String format = filtreFormat.getValue();
+
+        String filter = "where format_nom = '" + format + "'  and ( titre like '%" + query + "%' or realisateur like '%" + query + "%' or editeur like '%" + query + "%')";
+        if (format.equals("All")) {
+            filter = "where titre like '%" + query + "%' or realisateur like '%" + query + "%' or editeur like '%" + query + "%'";
+        }
+        movieList.getItems().clear();
+        loadMovieData(filter);
+        System.out.println("Query: " + query);
+        System.out.println("Filter: " + filter);
+
+        }
+
     }
 
 
@@ -482,4 +539,3 @@ public class HelloController {
 
 
 
-}

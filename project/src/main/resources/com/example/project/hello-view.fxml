@@ -74,7 +74,7 @@
                   <TableColumn fx:id="annee" prefWidth="100.0" text="Annee" />
                   <TableColumn fx:id="genre" prefWidth="100.0" text="Genre" />
                    <TableColumn fx:id="ajout" prefWidth="100.0" text="Date d'ajout" />
-                  <TableColumn fx:id="editor" prefWidth="75.0" text="Editeur" />
+                  <TableColumn fx:id="editor" prefWidth="114.0" text="Editeur" />
                </columns>
             </TableView>
             <HBox prefHeight="100.0" prefWidth="200.0">
@@ -186,9 +186,10 @@
                            </toggleGroup>
                         </RadioMenuItem>
                         <RadioMenuItem fx:id="BluRayMenuAdd" mnemonicParsing="false" text="Blu-Ray" toggleGroup="$type" />
-                        <RadioMenuItem fx:id="LaDiMenuAdd" mnemonicParsing="false" text="Laser-Disc" toggleGroup="$type" />
+                        <RadioMenuItem fx:id="LaDiMenuAdd" mnemonicParsing="false" text="Laserdisc" toggleGroup="$type" />
                         <RadioMenuItem fx:id="UmdMenuAdd" mnemonicParsing="false" text="UMD" toggleGroup="$type" />
                         <RadioMenuItem mnemonicParsing="false" text="Blu-Ray 4k" toggleGroup="$type" />
+                        <RadioMenuItem mnemonicParsing="false" text="Blu-Ray 3d" />
                      </items>
                   </SplitMenuButton>
                   <Button fx:id="submitAdd" alignment="BOTTOM_RIGHT" mnemonicParsing="false" text="Valider">
@@ -222,7 +223,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <CheckBox fx:id="ldCheck" mnemonicParsing="false" text="Laser-Disc">
+                        <CheckBox fx:id="ldCheck" mnemonicParsing="false" text="Laserdisc">
                            <HBox.margin>
                               <Insets left="90.0" right="23.0" top="3.0" />
                            </HBox.margin>
