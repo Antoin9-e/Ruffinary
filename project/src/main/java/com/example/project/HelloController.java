@@ -117,12 +117,11 @@ public class HelloController {
     private VBox barcodeAdd;
     @FXML
     private CheckBox ldCheck;
+    @FXML
+    private Button modifyBtn;
 
 
-    // Créer la connexion
-    String url = "jdbc:mysql://localhost:3306/ruffinary"; // Remplace par tes infos
-    String username = "root"; // Remplace par ton nom d'utilisateur
-    String password = "J9ueve-14540"; // Remplace par ton mot de passe
+
 
 
     @FXML
@@ -137,6 +136,7 @@ public class HelloController {
         barcodeAdd.setVisible(false);
         addCase.setManaged(false);
         addCase.setVisible(false);
+        modifyBtn.setDisable(true);
 
 
         try {
@@ -196,14 +196,17 @@ public class HelloController {
         // Ajouter un écouteur d'événements pour le bouton de suppression
         movieList.setOnMouseClicked(event -> {
             if (movieList.getSelectionModel().getSelectedItem() != null) {
+                Entity selectedMovie = movieList.getSelectionModel().getSelectedItem();
+                modifyBtn.setDisable(false);
                 deleteBtn.setDisable(false);
                 deleteBtn.setOnAction(evt -> {
-                    Entity selectedMovie = movieList.getSelectionModel().getSelectedItem();
+
                     deleteEntity(selectedMovie);
 
                 });
             } else {
                 deleteBtn.setDisable(true);
+                modifyBtn.setDisable(true);
             }
         });
 
@@ -286,10 +289,13 @@ public class HelloController {
 
     // Méthode pour charger les données de la base de données
     private void loadMovieData(String filter) {
-        try (Connection connection = DriverManager.getConnection(url, username, password);) {
+        // Connexion à la base de données
+        Bdd q = new Bdd();
+
+        try (Connection con = q.connect();) {
 
             String query = "SELECT * FROM entity join format using(format_id)" + filter;
-            try (Statement statement = connection.createStatement()) {
+            try (Statement statement = con.createStatement()) {
                 ResultSet resultSet = statement.executeQuery(query);
 
                 int cpt = 0;
@@ -311,7 +317,7 @@ public class HelloController {
                 // Afficher les données dans la TableView
                 movieList.setItems(movieData);
 
-                connection.close();
+                con.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
