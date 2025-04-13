@@ -199,27 +199,7 @@ public class HelloController {
                 deleteBtn.setDisable(false);
                 deleteBtn.setOnAction(evt -> {
                     Entity selectedMovie = movieList.getSelectionModel().getSelectedItem();
-                    System.out.println("Selected movie: " + selectedMovie.getTitle());
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Confirmation de suppression");
-                    alert.setHeaderText("Êtes-vous sûr de vouloir supprimer ce film ?");
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.isPresent() && result.get() == ButtonType.OK) {
-                        Bdd b = new Bdd();
-                        if (b.deleteEntity(selectedMovie)) {
-                            Alert a = new Alert(Alert.AlertType.INFORMATION);
-                            a.setTitle("Suppression reussi");
-                            a.setHeaderText("Le film a bien été supprimé");
-                            a.show();
-                            movieData.remove(selectedMovie);
-                        } else {
-                            Alert f = new Alert(Alert.AlertType.ERROR);
-                            f.setTitle("Erreur de suppression");
-                            f.setHeaderText("Le film n'a pas pu être supprimé");
-                            f.show();
-                        }
-                    }
-
+                    deleteEntity(selectedMovie);
 
                 });
             } else {
@@ -269,6 +249,38 @@ public class HelloController {
 
         });
 
+
+    }
+
+    private  void deleteEntity(Entity entity) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation de suppression");
+        alert.setHeaderText("Êtes-vous sûr de vouloir supprimer ce film ?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Bdd b = new Bdd();
+            if (b.deleteEntity(entity)) {
+                Alert a = new Alert(Alert.AlertType.INFORMATION);
+                a.setTitle("Suppression reussi");
+                a.setHeaderText("Le film a bien été supprimé");
+                a.show();
+                movieData.remove(entity);
+                movieList.getItems().clear();
+
+                String filter = "where format_nom = '" + filtreFormat.getValue() + "'";
+                if (filtreFormat.getValue().equals("All")) {
+                    filter = "";
+                }
+                loadMovieData(filter);
+
+
+            } else {
+                Alert f = new Alert(Alert.AlertType.ERROR);
+                f.setTitle("Erreur de suppression");
+                f.setHeaderText("Le film n'a pas pu être supprimé");
+                f.show();
+            }
+        }
 
     }
 
