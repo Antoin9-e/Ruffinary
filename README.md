@@ -20,6 +20,7 @@ Utilise `script.sql` (fourni dans le dossier d'installation) pour créer les tab
 
 ```bash
 mysql -u root -p < script.sql
+```
 
 
 
