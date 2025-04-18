@@ -18,6 +18,13 @@ Download this installer `Ruffinary_Install.exe` : https://github.com/Antoin9-e/R
 ### 3. ⚙️ Importer la base de données
 Utilise `script.sql` (fourni dans le dossier d'installation) pour créer les tables :
 
+#### Manuellement
+
+.ouvrir le fichier config.properties
+.remplacer le nom d'utilisateur et le mdp
+
+#### Avec une commande
+
 ```bash
 mysql -u root -p < script.sql
 ```
