@@ -36,9 +36,22 @@ mysql -u root -p < script.sql
 
 ## Usage
 
+### Main Features
+
+- **Feature 1**: Add a movie.
+  -  To add a new movie, click on "Ajouter".
+  -  You can add a movie manually or by barcode
+
+- **Feature 2**: Modify a Movie.
+  -  To modify a movie, click on "Modifier".
+  -  You can replace any informations about the choosen movie
+
+- **Feature 3**: Delete a movie.
+  - To delete a movie, click on "Supprimer".
+  
 
 
-## Contributing
+
 
 
 
