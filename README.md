@@ -8,7 +8,7 @@ Ruffinary is a media library for my father-in-law who collects Blu-ray laser dis
 
 
 ### 1. 📥 Download Install.exe 
-Download this installer `Ruffinary_Install.exe` : 
+Download this installer `Ruffinary_Install.exe` : https://github.com/Antoin9-e/Ruffinary/blob/main/Ruffinary_Install.exe
 
 ### 2. 🛠️ Prérequis
 - **Java 8 ou +** installé : https://www.java.com/en/download/manual.jsp
