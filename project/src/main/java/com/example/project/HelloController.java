@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -202,6 +203,13 @@ public class HelloController {
                 deleteBtn.setOnAction(evt -> {
 
                     deleteEntity(selectedMovie);
+
+                });
+
+                modifyBtn.setOnAction(event1 -> {
+
+                    Entity selectedMovie1 = movieList.getSelectionModel().getSelectedItem();
+                    updateEntity(selectedMovie1);
 
                 });
             } else {
@@ -546,6 +554,61 @@ public class HelloController {
         loadMovieData(filter);
         System.out.println("Query: " + query);
         System.out.println("Filter: " + filter);
+
+        }
+
+        public void updateEntity(Entity entity) {
+        Bdd b = new Bdd();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        TextField real = new TextField();
+        TextField nom = new TextField();
+        TextField annee = new TextField();
+        TextField editeur = new TextField();
+        TextField format = new TextField();
+        ChoiceBox<String> genre = new ChoiceBox<>();
+        GridPane grid = new GridPane();
+        genre.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
+        alert.getDialogPane().setContent(grid);
+        nom.setText(entity.getTitle());
+        real.setText(entity.getDirector());
+        annee.setText(String.valueOf(entity.getYear()));
+        editeur.setText(entity.getEditor());
+        format.setText(entity.getFormat());
+        genre.setValue(entity.getGenre());
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Titre:"), 0, 0);
+        grid.add(nom, 1, 0);
+        grid.add(new Label("Realisateur:"), 0, 1);
+        grid.add(real, 1, 1);
+        grid.add(new Label("Annee:"), 0, 2);
+        grid.add(annee, 1, 2);
+        grid.add(new Label("Editeur:"), 0, 3);
+        grid.add(editeur, 1, 3);
+        grid.add(new Label("Format:"), 0, 4);
+        grid.add(format, 1, 4);
+        grid.add(new Label("Genre:"), 0, 5);
+        grid.add(genre, 1, 5);
+        alert.setTitle("Modifier l'entité");
+        alert.setHeaderText("Modifier l'entité");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            Entity newEntity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annee.getText()), editeur.getText(), genre.getValue(), format.getText(), LocalDate.now().toString());
+            b.updateEnt(entity, newEntity);
+            Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+            alert2.setTitle("Modification reussi");
+            alert2.setHeaderText("L'entité a bien été modifiée");
+            alert2.show();
+            movieData.clear();
+            loadMovieData("");
+            filtreFormat.setValue("All");
+        } else {
+            System.out.println("Cancel clicked");
+        }
+
+
+
+
 
         }
 

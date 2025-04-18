@@ -2,23 +2,47 @@ package com.example.project;
 
 import javafx.scene.control.Alert;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Bdd {
 
+
+
     public Connection connect() {
-        String url = "jdbc:mysql://localhost:3306/ruffinary";
-        String username = "root";
-        String password = "J9ueve-14540";
+        Properties props = new Properties();
+
+        try (InputStream input = new FileInputStream("config.properties")) {
+            props.load(input);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+
+
+        String host = props.getProperty("host");
+        String port = props.getProperty("port");
+        String database = props.getProperty("database");
+        String username = props.getProperty("username");
+        String password = props.getProperty("password");
+
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
+
+
+
+
 
         try {
-            // Connexion à la base de données sans fermer immédiatement
+
             Connection connection = DriverManager.getConnection(url, username, password);
             System.out.println("✅ Connexion réussie !");
-            return connection;  // Ne pas fermer la connexion ici
+            return connection;
         } catch (SQLException e) {
             System.out.println("❌ Erreur de connexion : " + e.getMessage());
             return null;
@@ -39,7 +63,7 @@ public class Bdd {
     public boolean addEntity(Entity entity, String code_barre) {
         Connection connection = null;
         try {
-            connection = connect();  // Connexion ouverte pour exécuter les requêtes
+            connection = connect();
             if (connection != null) {
                 String sql = "INSERT INTO entity (titre, realisateur, editeur, annee_sortie, code_barre, genre, format_id, date_ajout) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -109,8 +133,48 @@ public class Bdd {
         }catch (Exception e) {
             System.out.println("❌ Erreur de connexion ou autre : " + e.getMessage());
         } finally {
-            closeConnection(connection);  // Connexion fermée à la fin de la méthode
+            closeConnection(connection);
         }
         return true;
     }
+
+   public void updateEnt(Entity a, Entity b) {
+        Connection connection = null;
+        try {
+            connection = connect();
+            if (connection != null) {
+                String sql = "UPDATE entity SET titre = ?, realisateur = ?, editeur = ?, annee_sortie = ?, genre = ?, format_id = ?, date_ajout = ? WHERE titre = ? AND realisateur = ? AND annee_sortie = ? AND format_id = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, b.getTitle());
+                    preparedStatement.setString(2, b.getDirector());
+                    preparedStatement.setString(3, b.getEditor());
+                    preparedStatement.setInt(4, b.getYear());
+
+                    preparedStatement.setString(5, b.getGenre());
+                    preparedStatement.setInt(6, b.getFormatId());
+                    preparedStatement.setString(7, b.getDateAjout());
+                    preparedStatement.setString(8, a.getTitle());
+                    preparedStatement.setString(9, a.getDirector());
+                    preparedStatement.setInt(10, a.getYear());
+                    preparedStatement.setInt(11, a.getFormatId());
+
+                    int rowsAffected = preparedStatement.executeUpdate();
+                    if (rowsAffected > 0) {
+                        System.out.println("✅ Entité mise à jour avec succès !");
+                    } else {
+                        System.out.println("❌ Aucune entité mise à jour.");
+                    }
+                } catch (SQLException e) {
+                    System.out.println("❌ Erreur d'exécution de la requête : " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            closeConnection(connection);
+        }
+        System.out.println("Entité mise à jour avec succès !");
+
+   }
 }

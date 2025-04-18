@@ -3,20 +3,55 @@
     -fx-border-color: #aaaaaa;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
-
     -fx-margin-top: 10px;
     -fx-font-size: 14px;
 }
 
-
-
 .table-view .column-header .label {
     -fx-text-fill: black;
-    -fx-font-size: 13 px;
-    -fx-padding: 8 4 8 4;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 4px 8px 4px;
 }
 
 .button:hover {
     -fx-background-color: #e0e0e0;
     -fx-text-fill: black;
 }
+
+.table-view .cell {
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-margin: 8px 4px 8px 4px;
+}
+
+.table-view .cell:hover {
+    -fx-background-color: lightgray;
+}
+
+.table-view .cell:focused {
+    -fx-background-color: lightgray;
+    -fx-background-radius: 3px; /* Corrected property */
+    -fx-border-style: solid; /* Corrected property */
+    -fx-control-inner-background: gray; /* Corrected property */
+    -fx-border-width: 1px; /* Corrected property */
+    -fx-border-color: gray; /* Corrected property */
+    -fx-text-fill: white; /* Corrected property */
+}
+
+.contAdd {
+    -fx-background-color: lightgray;
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+
+}
+
+.bcodeadd {
+    -fx-background-color: lightgray;
+    -fx-border-color: #aaaaaa;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+}
+

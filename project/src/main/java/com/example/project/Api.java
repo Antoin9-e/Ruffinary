@@ -210,8 +210,12 @@ public class Api {
         String editor = "";
         if (json.contains("editeur")) {
             String [] parts = json.split("<editeur>");
-
             editor = parts[1].split("</editeur>")[0];
+            if (editor.contains("&#039;")){
+                editor = editor.replace("&#039;", "'");
+            }
+
+
         }else{
             editor = "Unknown";
         }
