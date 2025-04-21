@@ -11,23 +11,34 @@ Ruffinary is a media library for my father-in-law who collects Blu-ray laser dis
 Download this installer `Ruffinary_Install.exe` : https://github.com/Antoin9-e/Ruffinary/blob/main/Ruffinary_Install.exe
 
 ### 2. 🛠️ Prérequis
-- **Java 8 ou +** installé : https://www.java.com/en/download/manual.jsp
-- **MySQL** installé et en cours d’exécution : https://dev.mysql.com/downloads/installer/
+- **JDK 23 (OU PLUS) : [https://www.java.com/en/download/manual.jsp](https://www.oracle.com/java/technologies/downloads/)
+  -> telecharger le jdk
+  -> ajouter le au variables d'environnement ( barre de recherche (variable environnement) >  ajouter une variable syst ( appeler la JAVA_HOME) > ajouter le path du jdk > CLiquer sur la Var PATH (nouvelle) > taper %JAVA_HOME%\bin)
+- **MySQLserver** installé et configuré : [https://dev.mysql.com/downloads/installer/](https://dev.mysql.com/downloads/mysql/8.0.html)
 - Compte MySQL valide (ex : `root / motdepasse`)
+- **MysqlWorkbench** ou autres : pour executer le script.sql
 
 ### 3. ⚙️ Importer la base de données
 Utilise `script.sql` (fourni dans le dossier d'installation) pour créer les tables :
 
 #### Manuellement
 
-.ouvrir le fichier config.properties
-.remplacer le nom d'utilisateur et le mdp
+.ouvrir ton outil sql ex workbench
+.connecte toi a ton serveur (configur'2 grace a mysql server) et copie colle le  script.sql
+. execute le 
 
 #### Avec une commande
 
 ```bash
 mysql -u root -p < script.sql
 ```
+
+### 4. Connexion de l'application au server SQL
+
+- Execute en tant qu'administrateur le fichier config.properties fourni dans l'installer avec un editeur comme notepad ++
+- remplace par les identifiants de ton compte SQL ( ex : root / mdp)
+
+### 5. Lance l'application avec le .exe fourni
 
 
 
