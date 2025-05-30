@@ -6,33 +6,36 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public class HelloController {
-    @FXML
-    private Label welcomeText;
+
 
     @FXML
     private BorderPane conteneur;
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
+
 
     @FXML
     private Label cpt;
+
+    private Stage stage;
 
     @FXML
     private ChoiceBox<String> genreChoice;
@@ -127,6 +130,14 @@ public class HelloController {
 
     @FXML
     public void initialize() {
+
+       movieList.setFocusTraversable(false);
+       champRecherche.setFocusTraversable(false);
+       filtreFormat.setFocusTraversable(false);
+       modifyBtn.setFocusTraversable(false);
+       addBTN.setFocusTraversable(false);
+       deleteBtn.setFocusTraversable(false);
+
 
 
         genreChoice.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
@@ -261,6 +272,10 @@ public class HelloController {
         });
 
 
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     private  void deleteEntity(Entity entity) {
@@ -542,6 +557,15 @@ public class HelloController {
         }
     }
 
+    @FXML
+    private void infos(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("A propos de l'application");
+        alert.setHeaderText(" Développée par Antoin9-e");
+        alert.setContentText("Github: https://github.com/Antoin9-e");
+        alert.showAndWait();
+    }
+
     private void searchBar() {
         String query = champRecherche.getText();
         String format = filtreFormat.getValue();
@@ -610,6 +634,17 @@ public class HelloController {
 
 
 
+        }
+
+        public void exporter(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Exporter");
+
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+        fileChooser.getExtensionFilters().add(filter);
+        File choice = fileChooser.showSaveDialog(stage);
+        Bdd b = new Bdd();
+        b.exportCsv(choice.getAbsolutePath()+".csv");
         }
 
     }

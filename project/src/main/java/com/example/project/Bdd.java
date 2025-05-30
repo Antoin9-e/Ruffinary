@@ -2,13 +2,8 @@ package com.example.project;
 
 import javafx.scene.control.Alert;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.io.*;
+import java.sql.*;
 import java.util.Properties;
 
 public class Bdd {
@@ -176,5 +171,48 @@ public class Bdd {
         }
         System.out.println("Entité mise à jour avec succès !");
 
+   }
+
+   public void exportCsv(String filePath) {
+       Connection connection = null;
+       try {
+           connection = connect();
+           if (connection != null) {
+               String sql = "SELECT * FROM entity";
+               try (Statement stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery(sql);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+
+                   ResultSetMetaData metaData = rs.getMetaData();
+                   int columnCount = metaData.getColumnCount();
+
+                   for (int i = 1; i <= columnCount; i++) {
+                       writer.write(metaData.getColumnName(i));
+                       if (i < columnCount) writer.write(",");
+                   }
+                   writer.newLine();
+
+                   while (rs.next()) {
+                       for (int i = 1; i <= columnCount; i++) {
+                           String value = rs.getString(i);
+                           if (value != null) {
+                               value = value.replace("\"", "\"\""); // échappe les guillemets
+                           }
+                           writer.write("\"" + value + "\"");
+                           if (i < columnCount) writer.write(",");
+                       }
+                       writer.newLine();
+                   }
+
+                   System.out.println("Export CSV terminé avec succès.");
+               } catch (SQLException | IOException e) {
+                   e.printStackTrace();
+               }
+           }
+       } catch (Exception e) {
+           throw new RuntimeException("Erreur lors de la connexion : " + e.getMessage(), e);
+       } finally {
+           closeConnection(connection);
+       }
    }
 }

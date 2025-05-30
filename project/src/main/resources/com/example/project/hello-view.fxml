@@ -26,16 +26,11 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Unspecified Action" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" text="Export" onAction="#exporter" />
+
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
+
             <Menu mnemonicParsing="false" text="Preferences">
                <items>
                   <RadioMenuItem fx:id="dark" mnemonicParsing="false" text="Mode Sombre">
@@ -48,7 +43,7 @@
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="About" onAction="#infos" />
             </items>
           </Menu>
         </menus>
@@ -89,7 +84,7 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="deleteBtn" disable="true" mnemonicParsing="false" text="Suprimer" />
+                  <Button fx:id="deleteBtn" disable="true" mnemonicParsing="false" text="Supprimer" />
                </children>
                <VBox.margin>
                   <Insets top="20.0" />
