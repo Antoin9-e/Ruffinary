@@ -11,8 +11,9 @@ public class Entity {
     private String genre;
     private String format;
     private  String date_ajout ;
+    private int rangement;
 
-    public Entity(String title, String director, int year, String editor, String genre, String format, String date_ajout) {
+    public Entity(String title, String director, int year, String editor, String genre, String format, String date_ajout, int rangement) {
 
         this.title = title;
         this.director = director;
@@ -21,6 +22,7 @@ public class Entity {
         this.format = format;
         this.date_ajout = date_ajout;
         this.editor = editor;
+        this.rangement = rangement;
     }
 
     public Entity(String format){
@@ -30,6 +32,7 @@ public class Entity {
         this.genre = "Unknown";
         this.format = format;
         this.date_ajout = LocalDate.now().toString();
+        this.rangement = 0;
     }
 
 
@@ -72,5 +75,9 @@ public class Entity {
 
     public String getEditor() {
         return editor;
+    }
+
+    public int getRangement() {
+        return rangement;
     }
 }

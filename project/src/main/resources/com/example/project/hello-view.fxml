@@ -68,8 +68,9 @@
                   <TableColumn fx:id="format" prefWidth="200.0" text="Format" />
                   <TableColumn fx:id="annee" prefWidth="150.0" text="Annee" />
                   <TableColumn fx:id="genre" prefWidth="200.0" text="Genre" />
-                   <TableColumn fx:id="ajout" prefWidth="200.0" text="Date d'ajout" />
-                  <TableColumn fx:id="editor" prefWidth="270.0" text="Editeur" />
+                   <TableColumn fx:id="ajout" prefWidth="150.0" text="Date d'ajout" />
+                  <TableColumn fx:id="editor" prefWidth="200.0" text="Editeur" />
+                  <TableColumn fx:id="rangement" prefWidth="120.0" text="Rangement" />
                </columns>
             </TableView>
             <HBox prefHeight="100.0" prefWidth="200.0">
@@ -167,6 +168,20 @@
                            </HBox.margin>
                         </Label>
                         <TextField fx:id="editeurTextField">
+                           <HBox.margin>
+                              <Insets bottom="3.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Rangement: ">
+                           <HBox.margin>
+                              <Insets bottom="3.0" right="32.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="rangementField">
                            <HBox.margin>
                               <Insets bottom="3.0" />
                            </HBox.margin>

@@ -60,7 +60,7 @@ public class Bdd {
         try {
             connection = connect();
             if (connection != null) {
-                String sql = "INSERT INTO entity (titre, realisateur, editeur, annee_sortie, code_barre, genre, format_id, date_ajout) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO entity (titre, realisateur, editeur, annee_sortie, code_barre, genre, format_id, date_ajout,rangement) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setString(1, entity.getTitle());
                     preparedStatement.setString(2, entity.getDirector());
@@ -70,6 +70,7 @@ public class Bdd {
                     preparedStatement.setString(6, entity.getGenre());
                     preparedStatement.setInt(7, entity.getFormatId());
                     preparedStatement.setString(8, entity.getDateAjout());
+                    preparedStatement.setInt(9, entity.getRangement());
 
                     int rowsAffected = preparedStatement.executeUpdate();
                     if (rowsAffected > 0) {
@@ -138,7 +139,7 @@ public class Bdd {
         try {
             connection = connect();
             if (connection != null) {
-                String sql = "UPDATE entity SET titre = ?, realisateur = ?, editeur = ?, annee_sortie = ?, genre = ?, format_id = ?, date_ajout = ? WHERE titre = ? AND realisateur = ? AND annee_sortie = ? AND format_id = ?";
+                String sql = "UPDATE entity SET titre = ?, realisateur = ?, editeur = ?, annee_sortie = ?, genre = ?, format_id = ?, date_ajout = ?, rangement = ? WHERE titre = ? AND realisateur = ? AND annee_sortie = ? AND format_id = ?";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setString(1, b.getTitle());
                     preparedStatement.setString(2, b.getDirector());
@@ -148,10 +149,12 @@ public class Bdd {
                     preparedStatement.setString(5, b.getGenre());
                     preparedStatement.setInt(6, b.getFormatId());
                     preparedStatement.setString(7, b.getDateAjout());
-                    preparedStatement.setString(8, a.getTitle());
-                    preparedStatement.setString(9, a.getDirector());
-                    preparedStatement.setInt(10, a.getYear());
-                    preparedStatement.setInt(11, a.getFormatId());
+                    preparedStatement.setInt(8, b.getRangement());
+                    preparedStatement.setString(9, a.getTitle());
+                    preparedStatement.setString(10, a.getDirector());
+                    preparedStatement.setInt(11, a.getYear());
+                    preparedStatement.setInt(12, a.getFormatId());
+
 
                     int rowsAffected = preparedStatement.executeUpdate();
                     if (rowsAffected > 0) {

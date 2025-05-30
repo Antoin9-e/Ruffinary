@@ -63,6 +63,9 @@ public class HelloController {
     private TextField realisateurField;
     @FXML
     private TextField anneeField;
+
+    @FXML
+    private TextField rangementField;
     @FXML
     private TextField genreField;
     @FXML
@@ -114,6 +117,8 @@ public class HelloController {
     @FXML
     private TableColumn<Entity, String> editor;
     @FXML
+    private TableColumn<Entity, Integer> rangement;
+    @FXML
     private Button submitAdd;
     @FXML
     private Button submitAdd2;
@@ -159,6 +164,7 @@ public class HelloController {
             director.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDirector()));
             ajout.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDateAjout()));
             editor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEditor()));
+            rangement.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRangement()).asObject());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,8 +201,8 @@ public class HelloController {
             titleField.clear();
             realisateurField.clear();
             anneeField.clear();
-            genreField.clear();
             editeurTextField.clear();
+            rangementField.clear();
         });
 
         submitAdd2.setOnAction(event -> {
@@ -331,8 +337,9 @@ public class HelloController {
                     String format = resultSet.getString("format_nom");
                     String date_ajout = resultSet.getString("date_ajout");
                     String editor = resultSet.getString("editeur");
+                    int rangement = resultSet.getInt("rangement");
 
-                    movieData.add(new Entity(title, director, year, editor, genre, format, date_ajout));
+                    movieData.add(new Entity(title, director, year, editor, genre, format, date_ajout,rangement));
                     cpt++;
                 }
                 this.cpt.setText(String.valueOf(cpt));
@@ -355,7 +362,7 @@ public class HelloController {
             Entity en = new Entity(format);
             System.out.println("Format: " + format + " id: " + en.getFormatId());
 
-            Entity entity = new Entity(titleField.getText(), realisateurField.getText(), Integer.parseInt(anneeField.getText()), editeurTextField.getText(), genreChoice.getValue(), en.getFormat(), LocalDate.now().toString());
+            Entity entity = new Entity(titleField.getText(), realisateurField.getText(), Integer.parseInt(anneeField.getText()), editeurTextField.getText(), genreChoice.getValue(), en.getFormat(), LocalDate.now().toString(),Integer.parseInt(rangementField.getText()));
             b.addEntity(entity, null);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ajout reussi");
@@ -425,9 +432,11 @@ public class HelloController {
                 TextField annees = new TextField();
                 TextField editeurs = new TextField();
                 TextField format = new TextField();
+                TextField range = new TextField();
                 ChoiceBox<String> genre = new ChoiceBox<>();
                 genre.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
                 genre.setValue("Unknow");
+                range.setText("Rangement de l'item");
                 nom.setText(titre);
                 real.setText("Unknown");
                 annees.setText(anneesr);
@@ -450,13 +459,16 @@ public class HelloController {
                 grid.add(format, 1, 4);
                 grid.add(new Label("Genre:"), 0, 5);
                 grid.add(genre, 1, 5);
+                grid.add(new Label("Range:"), 0, 6);
+                grid.add(range, 1, 6);
+
 
 
                 alert.getDialogPane().setContent(grid);
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    Entity entity = new Ld(nom.getText(), real.getText(), Integer.parseInt(annees.getText()), editeurs.getText(), genre.getValue(), format.getText(), LocalDate.now().toString(), a.getLaserDiscCountry(doc), a.getLaserDiscPrice(doc), a.getLaserDiscCode(doc));
+                    Entity entity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annees.getText()), editeurs.getText(), genre.getValue(), format.getText(), LocalDate.now().toString(), Integer.parseInt(range.getText()));
                     Bdd b = new Bdd();
                     if (b.addEntity(entity, code)) {
                         System.out.println("Entity added to database");
@@ -500,9 +512,11 @@ public class HelloController {
                 TextField annee = new TextField();
                 TextField editeur = new TextField();
                 TextField format = new TextField();
+                TextField range = new TextField();
                 ChoiceBox<String> genre = new ChoiceBox<>();
                 genre.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
                 genre.setValue("Unknow");
+                range.setText("Emplacement de l'item");
                 nom.setText(a.getTitle(json));
                 real.setText(a.getDirector(json));
                 annee.setText(String.valueOf(a.getAnnee(json)));
@@ -525,13 +539,15 @@ public class HelloController {
                 grid.add(format, 1, 4);
                 grid.add(new Label("Genre:"), 0, 5);
                 grid.add(genre, 1, 5);
+                grid.add(new Label("Emplacement:"), 0, 6);
+                grid.add(range, 1, 6);
 
 
                 conf.getDialogPane().setContent(grid);
 
                 Optional<ButtonType> result = conf.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    Entity entity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annee.getText()), editeur.getText(), genre.getValue(), format.getText(), LocalDate.now().toString());
+                    Entity entity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annee.getText()), editeur.getText(), genre.getValue(), format.getText(), LocalDate.now().toString(), Integer.parseInt(range.getText()));
 
                     Bdd b = new Bdd();
                     if (b.addEntity(entity, code)) {
@@ -589,12 +605,14 @@ public class HelloController {
         TextField annee = new TextField();
         TextField editeur = new TextField();
         TextField format = new TextField();
+        TextField range = new TextField();
         ChoiceBox<String> genre = new ChoiceBox<>();
         GridPane grid = new GridPane();
         genre.getItems().addAll("Action", "Aventure", "Science-Fiction", "Comédie", "Romance", "Drame", "Thriller");
         alert.getDialogPane().setContent(grid);
         nom.setText(entity.getTitle());
         real.setText(entity.getDirector());
+        range.setText(String.valueOf(entity.getRangement()));
         annee.setText(String.valueOf(entity.getYear()));
         editeur.setText(entity.getEditor());
         format.setText(entity.getFormat());
@@ -613,11 +631,13 @@ public class HelloController {
         grid.add(format, 1, 4);
         grid.add(new Label("Genre:"), 0, 5);
         grid.add(genre, 1, 5);
+        grid.add(new Label("Emplacement:"), 0, 6);
+        grid.add(range, 1, 6);
         alert.setTitle("Modifier l'entité");
         alert.setHeaderText("Modifier l'entité");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            Entity newEntity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annee.getText()), editeur.getText(), genre.getValue(), format.getText(), LocalDate.now().toString());
+            Entity newEntity = new Entity(nom.getText(), real.getText(), Integer.parseInt(annee.getText()), editeur.getText(), genre.getValue(), format.getText(), LocalDate.now().toString(), Integer.parseInt(range.getText()));
             b.updateEnt(entity, newEntity);
             Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
             alert2.setTitle("Modification reussi");
