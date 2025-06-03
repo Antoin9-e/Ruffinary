@@ -170,7 +170,12 @@ public class HelloController {
         }
         // Initialiser la TableView avec les colonnes
 
-        loadMovieData("");
+        try {
+
+            loadMovieData("");
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
         // Ajouter un écouteur d'événements pour le champ de recherche
         champRecherche.textProperty().addListener((observable, oldValue, newValue) -> {

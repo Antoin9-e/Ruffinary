@@ -3,6 +3,9 @@ package com.example.project;
 import javafx.scene.control.Alert;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Properties;
 
@@ -10,41 +13,51 @@ public class Bdd {
 
 
 
-    public Connection connect() {
-        Properties props = new Properties();
 
-        try (InputStream input = new FileInputStream("config.properties")) {
-            props.load(input);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+
+
+
+        public Connection connect() {
+            Properties props = new Properties();
+
+            // Récupère le chemin absolu de config.properties dans le répertoire courant
+            Path configPath = Paths.get(System.getProperty("user.dir"), "config.properties");
+
+            try (InputStream input = Files.newInputStream(configPath)) {
+                props.load(input);
+            } catch (IOException ex) {
+                System.err.println("❌ Impossible de charger le fichier config.properties depuis : " + configPath);
+                ex.printStackTrace();
+                return null;
+            }
+
+            // Récupération des paramètres
+            String host = props.getProperty("host");
+            String port = props.getProperty("port");
+            String database = props.getProperty("database");
+            String username = props.getProperty("username");
+            String password = props.getProperty("password");
+
+            // Vérifie si toutes les infos sont présentes
+            if (host == null || port == null || database == null || username == null || password == null) {
+                System.err.println("❌ Fichier config.properties incomplet. Veuillez vérifier les clés : host, port, database, username, password.");
+                return null;
+            }
+
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
+
+            try {
+                Connection connection = DriverManager.getConnection(url, username, password);
+                System.out.println("✅ Connexion réussie !");
+                return connection;
+            } catch (SQLException e) {
+                System.err.println("❌ Erreur de connexion à la base de données : " + e.getMessage());
+                return null;
+            }
         }
 
 
-
-        String host = props.getProperty("host");
-        String port = props.getProperty("port");
-        String database = props.getProperty("database");
-        String username = props.getProperty("username");
-        String password = props.getProperty("password");
-
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
-
-
-
-
-
-        try {
-
-            Connection connection = DriverManager.getConnection(url, username, password);
-            System.out.println("✅ Connexion réussie !");
-            return connection;
-        } catch (SQLException e) {
-            System.out.println("❌ Erreur de connexion : " + e.getMessage());
-            return null;
-        }
-    }
-
-    public void closeConnection(Connection connection) {
+        public void closeConnection(Connection connection) {
         if (connection != null) {
             try {
                 connection.close();
