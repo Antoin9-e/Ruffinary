@@ -59,6 +59,11 @@ mysql -u root -p < script.sql
 
 - **Feature 3**: Delete a movie.
   - To delete a movie, click on "Supprimer".
+ 
+  - **Feature 4**: Export database.(coming soon)
+  - To export , click on "File" and "export".
+  - you can use this formule on excel or libre office: ="INSERT INTO entity (entity_id,titre,realisateur,annee_sortie,genre,format_id,code_barre,date_ajout,editeur,rangement) VALUES (" & A2 & ", '" & B2 & "', '" & C2 & "', " & D2 & ", '" & E2 & "', " & F2 & ", '" & G2 & "', '" & H2 & "', '" & I2 & "', " & J2 & ");"
+
   
 
 
